@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import CategoryGrid from "@/components/category-grid";
 import { getPlayerProgress, getAllPlayers } from "@/lib/storage";
-import { PlayerProgress } from "@/lib/types";
+import { PlayerProgress, Difficulty } from "@/lib/types";
 
 export default function SoloPage() {
   const [playerName, setPlayerName] = useState("");
   const [progress, setProgress] = useState<PlayerProgress | null>(null);
   const [existingPlayers, setExistingPlayers] = useState<string[]>([]);
   const [started, setStarted] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<Difficulty | null>(null);
 
   useEffect(() => {
     const players = getAllPlayers();
@@ -123,9 +124,37 @@ export default function SoloPage() {
         </Link>
       </div>
 
-      <p className="text-slate-500 mb-6">Choisis une catégorie</p>
+      {/* Level selector */}
+      <div className="w-full max-w-4xl mb-6">
+        <p className="text-slate-500 mb-3">Choisis un niveau puis une catégorie</p>
+        <div className="flex gap-2 sm:gap-3">
+          {([
+            { key: null, label: "Auto", icon: "✨", desc: "Meilleur niveau débloqué" },
+            { key: "debutant" as Difficulty, label: "Débutant", icon: "🌱", desc: "Questions de base" },
+            { key: "confirme" as Difficulty, label: "Confirmé", icon: "📘", desc: "80% pour débloquer" },
+            { key: "expert" as Difficulty, label: "Expert", icon: "🏆", desc: "75% pour débloquer" },
+          ] as const).map(({ key, label, icon, desc }) => {
+            const isActive = selectedLevel === key;
+            return (
+              <button
+                key={label}
+                onClick={() => setSelectedLevel(key)}
+                className={`flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl border-2 transition-all duration-200 text-center cursor-pointer ${
+                  isActive
+                    ? "border-indigo-500 bg-indigo-50 shadow-sm"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                }`}
+              >
+                <div className="text-lg sm:text-xl mb-0.5">{icon}</div>
+                <div className={`text-xs sm:text-sm font-semibold ${isActive ? "text-indigo-700" : "text-slate-700"}`}>{label}</div>
+                <div className="text-[10px] sm:text-xs text-slate-400 hidden sm:block">{desc}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-      <CategoryGrid progress={progress!} />
+      <CategoryGrid progress={progress!} forcedLevel={selectedLevel} />
     </main>
   );
 }

@@ -57,7 +57,16 @@ export default function SoloCategoryPage({
       setPlayerName(name);
       const progress = getPlayerProgress(name);
       const slug = categorySlug as CategorySlug;
-      const level = getCurrentLevel(progress, slug);
+
+      // Check if a forced level was selected from the solo page
+      let level: Difficulty;
+      const forcedLevel = sessionStorage.getItem("solo_forced_level");
+      if (forcedLevel && ["debutant", "confirme", "expert"].includes(forcedLevel)) {
+        level = forcedLevel as Difficulty;
+        sessionStorage.removeItem("solo_forced_level");
+      } else {
+        level = getCurrentLevel(progress, slug);
+      }
       setDifficulty(level);
 
       const selected = selectQuestions(allQuestions, slug, level, 10);
@@ -225,9 +234,10 @@ export default function SoloCategoryPage({
       <div className="w-full max-w-2xl flex items-center justify-between mb-6">
         <button
           onClick={() => router.push("/solo")}
-          className="text-sm text-slate-400 hover:text-indigo-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
         >
-          ← Catégories
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+          Catégories
         </button>
         <div className="flex items-center gap-2">
           <span>{category.emoji}</span>
