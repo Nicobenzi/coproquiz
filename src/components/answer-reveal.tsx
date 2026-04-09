@@ -55,9 +55,10 @@ export default function AnswerReveal({
       {/* Bouton suivant */}
       <button
         onClick={onNext}
-        className="w-full mt-2 py-3.5 rounded-xl btn-gradient text-white font-semibold"
+        className="w-full mt-2 py-3.5 rounded-xl btn-gradient text-white font-semibold flex items-center justify-center gap-2 cursor-pointer"
       >
-        Question suivante →
+        <span>Question suivante</span>
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
       </button>
     </div>
   );

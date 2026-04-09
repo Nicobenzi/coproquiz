@@ -52,8 +52,9 @@ export default function PartySetupPage() {
 
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-      <Link href="/" className="text-sm text-slate-400 hover:text-purple-600 mb-8">
-        ← Retour à l&apos;accueil
+      <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-purple-600 transition-colors mb-8 cursor-pointer">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+        Retour à l&apos;accueil
       </Link>
 
       <div className="text-4xl mb-4">🎉</div>
@@ -63,7 +64,9 @@ export default function PartySetupPage() {
       <div className="w-full max-w-sm space-y-3">
         {players.map((name, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="text-sm text-slate-400 w-6">J{i + 1}</span>
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: ["#6366f1", "#ec4899", "#14b8a6"][i] }}>
+              {i + 1}
+            </div>
             <input
               type="text"
               value={name}
@@ -72,7 +75,7 @@ export default function PartySetupPage() {
                 if (e.key === "Enter") handleStart();
               }}
               placeholder={`Joueur ${i + 1}...`}
-              className="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-400 text-slate-700"
+              className="flex-1 px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-slate-700 bg-white shadow-sm transition-all"
               autoFocus={i === 0}
             />
             {players.length > MIN_PLAYERS && (
@@ -90,9 +93,10 @@ export default function PartySetupPage() {
         {players.length < MAX_PLAYERS && (
           <button
             onClick={addPlayer}
-            className="w-full py-2 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-purple-400 hover:text-purple-600 transition-all text-sm"
+            className="w-full py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-purple-400 hover:text-purple-600 transition-all text-sm flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            + Ajouter un joueur
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+            Ajouter un joueur
           </button>
         )}
 
@@ -102,9 +106,10 @@ export default function PartySetupPage() {
 
         <button
           onClick={handleStart}
-          className="w-full py-3.5 rounded-xl btn-gradient-purple text-white font-semibold mt-4"
+          className="w-full py-3.5 rounded-xl btn-gradient-purple text-white font-semibold mt-4 flex items-center justify-center gap-2 cursor-pointer"
         >
-          Lancer la partie ! 🚀
+          <span>Lancer la partie !</span>
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
         </button>
       </div>
     </main>

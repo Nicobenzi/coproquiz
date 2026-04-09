@@ -40,10 +40,12 @@ export default function SoloPage() {
   if (!started) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <Link href="/" className="text-sm text-slate-400 hover:text-indigo-600 mb-8">
-          ← Retour à l&apos;accueil
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-600 transition-colors mb-8 cursor-pointer">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+          Retour à l&apos;accueil
         </Link>
 
+        <div className="text-4xl mb-3">🎯</div>
         <h1 className="text-3xl font-bold text-slate-800 mb-2">Mode Solo</h1>
         <p className="text-slate-500 mb-8">Qui joue ?</p>
 
@@ -58,9 +60,13 @@ export default function SoloPage() {
                 <button
                   key={name}
                   onClick={() => handleSelectPlayer(name)}
-                  className="w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 transition-all font-medium text-slate-700"
+                  className="group w-full text-left px-4 py-3.5 rounded-xl bg-white border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 hover:shadow-sm hover:-translate-y-0.5 transition-all font-medium text-slate-700 flex items-center gap-3 cursor-pointer"
                 >
-                  👤 {name}
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                    {name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="flex-1">{name}</span>
+                  <svg className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                 </button>
               ))}
             </div>
@@ -80,15 +86,16 @@ export default function SoloPage() {
             onChange={(e) => setPlayerName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleStart()}
             placeholder="Ton prénom..."
-            className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700 mb-3"
+            className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 text-slate-700 mb-3 bg-white shadow-sm transition-all"
             autoFocus
           />
           <button
             onClick={handleStart}
             disabled={!playerName.trim()}
-            className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+            className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer"
           >
-            C&apos;est parti ! 🚀
+            <span>C&apos;est parti !</span>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           </button>
         </div>
       </main>
@@ -109,9 +116,10 @@ export default function SoloPage() {
         </div>
         <Link
           href="/"
-          className="text-sm text-slate-400 hover:text-indigo-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
         >
-          ← Accueil
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+          Accueil
         </Link>
       </div>
 

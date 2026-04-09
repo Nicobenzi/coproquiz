@@ -42,9 +42,10 @@ export default function PlayerTurn({
 
       <button
         onClick={onReady}
-        className="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl btn-gradient-purple text-white text-base sm:text-lg font-bold hover:scale-105 active:scale-95"
+        className="px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl btn-gradient-purple text-white text-base sm:text-lg font-bold hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2 mx-auto"
       >
-        Prêt ! 💪
+        <span>C&apos;est parti !</span>
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       </button>
 
       <p className="text-xs text-slate-400 mt-4">

@@ -27,7 +27,7 @@ export default function CategoryCard({
   return (
     <button
       onClick={onClick}
-      className="relative w-full rounded-2xl glass-card border-2 p-4 sm:p-5 text-left transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/50 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 shimmer-hover"
+      className="group relative w-full rounded-2xl glass-card border-2 p-4 sm:p-5 text-left transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/50 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 shimmer-hover cursor-pointer"
       style={{
         borderColor: isMastered ? category.color : undefined,
         // @ts-expect-error custom focus ring color
@@ -41,11 +41,14 @@ export default function CategoryCard({
 
       {/* Emoji + Name */}
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-2xl sm:text-3xl">{category.emoji}</span>
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-2xl sm:text-3xl transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: `${category.color}15` }}>
+          {category.emoji}
+        </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-slate-800 truncate">{category.name}</h3>
           <p className="text-xs text-slate-400 truncate">{category.description}</p>
         </div>
+        <svg className="w-4 h-4 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
       </div>
 
       {/* Level badge */}

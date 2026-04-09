@@ -261,9 +261,10 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between w-full max-w-2xl mb-6">
         <Link
           href="/"
-          className="text-sm text-slate-400 hover:text-indigo-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
         >
-          ← Accueil
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+          Accueil
         </Link>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-800">📊 Dashboard</h1>
         <div className="w-16" />
@@ -387,21 +388,24 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/solo"
-            className="flex-1 py-3 rounded-xl btn-gradient text-white font-semibold text-center"
+            className="flex-1 py-3 rounded-xl btn-gradient text-white font-semibold text-center flex items-center justify-center gap-2 cursor-pointer"
           >
-            Jouer en Solo
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>Jouer en Solo</span>
           </Link>
           <Link
             href="/party"
-            className="flex-1 py-3 rounded-xl btn-gradient-purple text-white font-semibold text-center"
+            className="flex-1 py-3 rounded-xl btn-gradient-purple text-white font-semibold text-center flex items-center justify-center gap-2 cursor-pointer"
           >
-            Mode Party
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span>Mode Party</span>
           </Link>
           <Link
             href="/classement"
-            className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold text-center transition-all hover:bg-slate-200"
+            className="flex-1 py-3 rounded-xl bg-white border-2 border-slate-200 text-slate-700 font-semibold text-center transition-all hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
-            🏆 Classement
+            <span>🏆</span>
+            <span>Classement</span>
           </Link>
         </div>
       </div>

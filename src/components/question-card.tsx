@@ -97,9 +97,10 @@ export default function QuestionCard({
       {!revealed && selectedAnswer !== null && (
         <button
           onClick={onNext}
-          className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold"
+          className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold flex items-center justify-center gap-2 cursor-pointer animate-fade-in-up"
         >
-          Valider
+          <span>Valider ma réponse</span>
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
         </button>
       )}
 

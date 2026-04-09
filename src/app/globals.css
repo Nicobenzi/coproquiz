@@ -23,18 +23,25 @@ body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* Touch behavior */
+/* Touch behavior & clickable feel */
 button, a {
   -webkit-tap-highlight-color: transparent;
+}
+button:not(:disabled), a[href] {
+  cursor: pointer;
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
 }
 
 /* ===== GLASS CARD =====  */
 .glass-card {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 /* ===== SHIMMER HOVER ===== */
@@ -82,27 +89,47 @@ button, a {
 /* ===== GRADIENT BUTTON ===== */
 .btn-gradient {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .btn-gradient:hover {
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+  transform: translateY(-2px);
 }
 .btn-gradient:active {
   transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .btn-gradient-purple {
   background: linear-gradient(135deg, #8b5cf6, #a855f7);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .btn-gradient-purple:hover {
   background: linear-gradient(135deg, #7c3aed, #9333ea);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+  transform: translateY(-2px);
 }
 .btn-gradient-purple:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
+/* ===== SECONDARY BUTTON ===== */
+.btn-secondary {
+  background: white;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+.btn-secondary:active {
   transform: translateY(0) scale(0.98);
 }
 
