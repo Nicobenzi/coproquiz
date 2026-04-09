@@ -86,7 +86,7 @@ export default function SoloPage() {
           <button
             onClick={handleStart}
             disabled={!playerName.trim()}
-            className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold transition-all hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
           >
             C&apos;est parti ! 🚀
           </button>

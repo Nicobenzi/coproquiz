@@ -17,16 +17,17 @@ export default function Scoreboard({ players, currentPlayerIndex }: ScoreboardPr
         {players.map((player, i) => (
           <div
             key={i}
-            className={`flex-1 rounded-xl p-2 sm:p-3 border-2 transition-all min-w-0 ${
+            className={`flex-1 rounded-xl p-2 sm:p-3 border-2 transition-all duration-300 min-w-0 ${
               i === currentPlayerIndex
-                ? "border-purple-400 bg-purple-50 shadow-sm"
-                : "border-slate-200 bg-white"
+                ? "border-purple-400 bg-purple-50/80 shadow-md shadow-purple-100 glow-ring"
+                : "glass-card"
             }`}
+            style={i === currentPlayerIndex ? {} : undefined}
           >
             {/* Name + Score */}
             <div className="flex items-center gap-2 mb-2">
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm"
                 style={{ backgroundColor: PLAYER_COLORS[i] }}
               >
                 {player.name.charAt(0).toUpperCase()}
@@ -35,10 +36,10 @@ export default function Scoreboard({ players, currentPlayerIndex }: ScoreboardPr
                 <p className="text-sm font-semibold text-slate-800 truncate">
                   {player.name}
                 </p>
-                <p className="text-xs text-slate-500">{player.score} pts</p>
+                <p className="text-xs text-slate-500 font-medium">{player.score} pts</p>
               </div>
               {player.streak >= 3 && (
-                <span className="text-xs" title={`Série de ${player.streak}`}>
+                <span className="text-xs bg-orange-100 text-orange-600 rounded-full px-1.5 py-0.5 font-bold" title={`Série de ${player.streak}`}>
                   🔥{player.streak}
                 </span>
               )}
@@ -61,7 +62,7 @@ export default function Scoreboard({ players, currentPlayerIndex }: ScoreboardPr
                     }
                   >
                     <span
-                      className={`text-sm ${hasBadge ? "opacity-100" : "opacity-25 grayscale"}`}
+                      className={`text-sm transition-all duration-300 ${hasBadge ? "opacity-100 scale-110" : "opacity-25 grayscale"}`}
                     >
                       {cat.emoji}
                     </span>

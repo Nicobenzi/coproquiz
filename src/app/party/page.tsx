@@ -102,7 +102,7 @@ export default function PartySetupPage() {
 
         <button
           onClick={handleStart}
-          className="w-full py-3 rounded-xl bg-purple-600 text-white font-semibold transition-all hover:bg-purple-700 mt-4"
+          className="w-full py-3.5 rounded-xl btn-gradient-purple text-white font-semibold mt-4"
         >
           Lancer la partie ! 🚀
         </button>

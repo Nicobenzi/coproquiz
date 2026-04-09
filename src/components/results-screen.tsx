@@ -32,7 +32,7 @@ export default function ResultsScreen({
 
   return (
     <div className="w-full max-w-md mx-auto text-center animate-scale-in">
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm">
+      <div className="glass-card rounded-2xl p-5 sm:p-8">
         {/* Emoji résultat */}
         <div className="text-5xl sm:text-6xl mb-3 sm:mb-4 animate-celebrate">
           {rate === 100 ? "🏆" : isGood ? "🎉" : "💪"}
@@ -77,7 +77,7 @@ export default function ResultsScreen({
         <div className="flex flex-col gap-3">
           <button
             onClick={onRetry}
-            className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold transition-all hover:bg-indigo-700"
+            className="w-full py-3.5 rounded-xl btn-gradient text-white font-semibold"
           >
             Rejouer cette catégorie
           </button>

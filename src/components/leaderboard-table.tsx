@@ -49,10 +49,10 @@ export default function LeaderboardTable({ players }: LeaderboardTableProps) {
         return (
           <div
             key={player.name}
-            className={`rounded-2xl border-2 p-4 ${
+            className={`rounded-2xl border-2 p-4 transition-all duration-300 ${
               rank === 0
-                ? "border-amber-400 bg-amber-50"
-                : "border-slate-200 bg-white"
+                ? "border-amber-400 bg-amber-50/80 shadow-md shadow-amber-100"
+                : "glass-card"
             }`}
           >
             {/* Header */}

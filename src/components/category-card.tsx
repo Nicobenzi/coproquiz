@@ -27,7 +27,7 @@ export default function CategoryCard({
   return (
     <button
       onClick={onClick}
-      className="relative w-full rounded-2xl bg-white border-2 border-slate-200 p-4 sm:p-5 text-left transition-all hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
+      className="relative w-full rounded-2xl glass-card border-2 p-4 sm:p-5 text-left transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/50 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 shimmer-hover"
       style={{
         borderColor: isMastered ? category.color : undefined,
         // @ts-expect-error custom focus ring color

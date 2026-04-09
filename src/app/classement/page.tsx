@@ -86,7 +86,7 @@ export default function ClassementPage() {
                 return (
                   <div
                     key={i}
-                    className="rounded-2xl border-2 border-slate-200 bg-white p-4"
+                    className="rounded-2xl glass-card p-4"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-xs text-slate-400">{dateStr}</p>

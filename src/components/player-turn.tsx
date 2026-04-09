@@ -42,7 +42,7 @@ export default function PlayerTurn({
 
       <button
         onClick={onReady}
-        className="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-purple-600 text-white text-base sm:text-lg font-bold transition-all hover:bg-purple-700 hover:scale-105 active:scale-95"
+        className="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl btn-gradient-purple text-white text-base sm:text-lg font-bold hover:scale-105 active:scale-95"
       >
         Prêt ! 💪
       </button>

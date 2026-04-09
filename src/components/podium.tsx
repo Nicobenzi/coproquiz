@@ -74,7 +74,7 @@ export default function Podium({ players, onPlayAgain, onHome }: PodiumProps) {
       <div className="flex flex-col gap-3">
         <button
           onClick={onPlayAgain}
-          className="w-full py-3 rounded-xl bg-purple-600 text-white font-semibold transition-all hover:bg-purple-700"
+          className="w-full py-3.5 rounded-xl btn-gradient-purple text-white font-semibold"
         >
           Revanche ! 🔥
         </button>

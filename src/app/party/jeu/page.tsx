@@ -55,6 +55,9 @@ export default function PartyGamePage() {
   const [stealAnswer, setStealAnswer] = useState<number | null>(null);
   const [stealRevealed, setStealRevealed] = useState(false);
 
+  // Timer key (incremented to reset timer on new question)
+  const [timerKey, setTimerKey] = useState(0);
+
   // Badge celebration
   const [celebrationData, setCelebrationData] = useState<{
     playerName: string;
@@ -107,8 +110,17 @@ export default function PartyGamePage() {
     setSelectedAnswer(null);
     setRevealed(false);
     setWasCorrect(false);
+    setTimerKey((k) => k + 1);
     setPhase("question");
   };
+
+  const handleTimeUp = useCallback(() => {
+    if (!currentQuestion) return;
+    // Time's up = wrong answer with no selection
+    setSelectedAnswer(-1);
+    setRevealed(true);
+    setWasCorrect(false);
+  }, [currentQuestion]);
 
   const handleSelectAnswer = (index: number) => {
     if (revealed) return;
@@ -173,8 +185,23 @@ export default function PartyGamePage() {
   };
 
   const handleStealAttempt = () => {
+    setTimerKey((k) => k + 1);
     setPhase("steal-question");
   };
+
+  const handleStealTimeUp = useCallback(() => {
+    if (!currentQuestion || stealPlayerIndex === null) return;
+    setStealAnswer(-1);
+    setStealRevealed(true);
+    // Reset stealer streak
+    setPlayers((prev) => {
+      const updated = [...prev];
+      const stealer = { ...updated[stealPlayerIndex] };
+      stealer.streak = 0;
+      updated[stealPlayerIndex] = stealer;
+      return updated;
+    });
+  }, [currentQuestion, stealPlayerIndex]);
 
   const handleStealPass = () => {
     advanceToNext();
@@ -413,6 +440,9 @@ export default function PartyGamePage() {
             onSelectAnswer={handleSelectAnswer}
             onNext={handleValidateOrNext}
             categoryColor={catInfo?.color}
+            showTimer
+            timerKey={timerKey}
+            onTimeUp={handleTimeUp}
           />
         )}
 
@@ -435,6 +465,9 @@ export default function PartyGamePage() {
             onSelectAnswer={handleStealSelect}
             onNext={handleStealValidate}
             categoryColor={catInfo?.color}
+            showTimer
+            timerKey={timerKey}
+            onTimeUp={handleStealTimeUp}
           />
         )}
       </div>
