@@ -2,11 +2,18 @@
 
 import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
-import { CategorySlug, Difficulty, Question, PlayerProgress } from "@/lib/types";
+import { CategorySlug, Difficulty, Question } from "@/lib/types";
 import { getCategoryBySlug } from "@/data/themes";
 import { allQuestions } from "@/data/questions";
 import { selectQuestions } from "@/lib/question-utils";
-import { getPlayerProgress, updateSoloProgress, getCurrentLevel } from "@/lib/storage";
+import {
+  getPlayerProgress,
+  updateSoloProgress,
+  getCurrentLevel,
+  getSoloSession,
+  saveSoloSession,
+  clearSoloSession,
+} from "@/lib/storage";
 import QuestionCard from "@/components/question-card";
 import ResultsScreen from "@/components/results-screen";
 
@@ -29,19 +36,34 @@ export default function SoloCategoryPage({
   const [correctCount, setCorrectCount] = useState(0);
   const [difficulty, setDifficulty] = useState<Difficulty>("debutant");
   const [levelUnlocked, setLevelUnlocked] = useState<Difficulty | null>(null);
+  const [sessionStartedAt, setSessionStartedAt] = useState<string | null>(null);
 
   const category = getCategoryBySlug(categorySlug);
 
   // Charger le joueur depuis le localStorage
   useEffect(() => {
-    // Chercher le dernier joueur utilisé
+    // 1) Session en cours pour cette catégorie → reprendre
+    const existing = getSoloSession();
+    if (existing && existing.categorySlug === categorySlug) {
+      setPlayerName(existing.playerName);
+      setDifficulty(existing.difficulty);
+      setQuestions(existing.questions);
+      setCurrentIndex(existing.currentIndex);
+      setCorrectCount(existing.correctCount);
+      setSelectedAnswer(existing.selectedAnswer);
+      setRevealed(existing.revealed);
+      setSessionStartedAt(existing.startedAt);
+      setPhase("quiz");
+      return;
+    }
+
+    // 2) Sinon, démarrer une nouvelle session avec le joueur courant
     const players = JSON.parse(localStorage.getItem("coproquiz_players") || "{}");
     const names = Object.keys(players);
 
     if (names.length === 1) {
       initQuiz(names[0]);
     } else if (names.length > 1) {
-      // Prendre le dernier joueur actif (le plus de parties)
       const sorted = names.sort(
         (a, b) => (players[b]?.gamesPlayed ?? 0) - (players[a]?.gamesPlayed ?? 0)
       );
@@ -58,6 +80,9 @@ export default function SoloCategoryPage({
       const progress = getPlayerProgress(name);
       const slug = categorySlug as CategorySlug;
 
+      // Nouvelle session → on efface l'éventuelle session obsolète
+      clearSoloSession();
+
       // Check if a forced level was selected from the solo page
       let level: Difficulty;
       const forcedLevel = sessionStorage.getItem("solo_forced_level");
@@ -71,13 +96,36 @@ export default function SoloCategoryPage({
 
       const selected = selectQuestions(allQuestions, slug, level, 10);
 
+      let finalQuestions: Question[];
+      let finalLevel = level;
       if (selected.length === 0) {
-        // Pas assez de questions pour ce niveau → fallback débutant
-        const fallback = selectQuestions(allQuestions, slug, "debutant", 10);
-        setQuestions(fallback);
+        finalQuestions = selectQuestions(allQuestions, slug, "debutant", 10);
+        finalLevel = "debutant";
         setDifficulty("debutant");
       } else {
-        setQuestions(selected);
+        finalQuestions = selected;
+      }
+      setQuestions(finalQuestions);
+      setCurrentIndex(0);
+      setSelectedAnswer(null);
+      setRevealed(false);
+      setCorrectCount(0);
+
+      const startedAt = new Date().toISOString();
+      setSessionStartedAt(startedAt);
+
+      if (finalQuestions.length > 0) {
+        saveSoloSession({
+          playerName: name,
+          categorySlug: slug,
+          difficulty: finalLevel,
+          questions: finalQuestions,
+          currentIndex: 0,
+          correctCount: 0,
+          selectedAnswer: null,
+          revealed: false,
+          startedAt,
+        });
       }
 
       setPhase("quiz");
@@ -85,46 +133,83 @@ export default function SoloCategoryPage({
     [categorySlug]
   );
 
+  const persist = useCallback(
+    (patch: Partial<{
+      currentIndex: number;
+      correctCount: number;
+      selectedAnswer: number | null;
+      revealed: boolean;
+    }>) => {
+      if (!playerName || questions.length === 0) return;
+      saveSoloSession({
+        playerName,
+        categorySlug: categorySlug as CategorySlug,
+        difficulty,
+        questions,
+        currentIndex: patch.currentIndex ?? currentIndex,
+        correctCount: patch.correctCount ?? correctCount,
+        selectedAnswer:
+          patch.selectedAnswer !== undefined ? patch.selectedAnswer : selectedAnswer,
+        revealed: patch.revealed ?? revealed,
+        startedAt: sessionStartedAt ?? undefined,
+      });
+    },
+    [
+      playerName,
+      categorySlug,
+      difficulty,
+      questions,
+      currentIndex,
+      correctCount,
+      selectedAnswer,
+      revealed,
+      sessionStartedAt,
+    ]
+  );
+
   const handleSelectAnswer = (index: number) => {
     if (revealed) return;
     setSelectedAnswer(index);
+    persist({ selectedAnswer: index });
   };
 
   const handleValidate = () => {
     if (selectedAnswer === null) return;
 
     if (!revealed) {
-      // Première pression = révéler la réponse
+      const isCorrect = selectedAnswer === questions[currentIndex].correctAnswer;
+      const newCorrect = isCorrect ? correctCount + 1 : correctCount;
       setRevealed(true);
-      if (selectedAnswer === questions[currentIndex].correctAnswer) {
-        setCorrectCount((c) => c + 1);
-      }
+      if (isCorrect) setCorrectCount(newCorrect);
+      persist({ revealed: true, correctCount: newCorrect });
     }
   };
 
   const handleNext = () => {
     if (currentIndex + 1 >= questions.length) {
-      // Fin du quiz → sauvegarder et afficher résultats
-      const finalCorrect =
-        selectedAnswer === questions[currentIndex].correctAnswer
-          ? correctCount
-          : correctCount;
-
+      // Fin du quiz → sauvegarder progression et afficher résultats
       const { levelUnlocked: unlocked } = updateSoloProgress(
         playerName,
         categorySlug as CategorySlug,
         difficulty,
         questions.length,
-        finalCorrect
+        correctCount
       );
       setLevelUnlocked(unlocked);
+      clearSoloSession();
       setPhase("results");
       return;
     }
 
-    setCurrentIndex((i) => i + 1);
+    const nextIndex = currentIndex + 1;
+    setCurrentIndex(nextIndex);
     setSelectedAnswer(null);
     setRevealed(false);
+    persist({
+      currentIndex: nextIndex,
+      selectedAnswer: null,
+      revealed: false,
+    });
   };
 
   // Gestion du validate/next dans QuestionCard

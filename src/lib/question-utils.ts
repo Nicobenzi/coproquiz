@@ -26,7 +26,23 @@ export function filterQuestions(
 }
 
 /**
- * Sélectionne N questions aléatoires pour une session de quiz
+ * Prépare une question pour l'affichage :
+ * - QCM : mélange les choix et ré-indexe correctAnswer
+ * - vrai-faux / ouverte : renvoyée inchangée (l'ordre Vrai/Faux est fixe)
+ */
+export function prepareQuestion(q: Question): Question {
+  if (q.type !== "qcm" || !q.choices || q.choices.length === 0) return q;
+  if (typeof q.correctAnswer !== "number") return q;
+  const { shuffledChoices, newCorrectIndex } = shuffleChoices(
+    q.choices,
+    q.correctAnswer
+  );
+  return { ...q, choices: shuffledChoices, correctAnswer: newCorrectIndex };
+}
+
+/**
+ * Sélectionne N questions aléatoires pour une session de quiz.
+ * Les choix QCM sont mélangés pour éviter tout biais de position.
  */
 export function selectQuestions(
   questions: Question[],
@@ -36,11 +52,12 @@ export function selectQuestions(
 ): Question[] {
   const filtered = filterQuestions(questions, category, difficulty);
   const shuffled = shuffle(filtered);
-  return shuffled.slice(0, count);
+  return shuffled.slice(0, count).map(prepareQuestion);
 }
 
 /**
- * Sélectionne une question aléatoire d'une catégorie (mode party)
+ * Sélectionne une question aléatoire d'une catégorie (mode party).
+ * Les choix QCM sont mélangés.
  */
 export function selectRandomQuestion(
   questions: Question[],
@@ -52,7 +69,8 @@ export function selectRandomQuestion(
     pool = pool.filter((q) => q.category === category);
   }
   if (pool.length === 0) return null;
-  return pool[Math.floor(Math.random() * pool.length)];
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  return prepareQuestion(picked);
 }
 
 /**

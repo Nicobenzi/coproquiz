@@ -2,16 +2,26 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import CategoryGrid from "@/components/category-grid";
-import { getPlayerProgress, getAllPlayers } from "@/lib/storage";
+import {
+  getPlayerProgress,
+  getAllPlayers,
+  getSoloSession,
+  clearSoloSession,
+  type SoloSession,
+} from "@/lib/storage";
+import { getCategoryBySlug } from "@/data/themes";
 import { PlayerProgress, Difficulty } from "@/lib/types";
 
 export default function SoloPage() {
+  const router = useRouter();
   const [playerName, setPlayerName] = useState("");
   const [progress, setProgress] = useState<PlayerProgress | null>(null);
   const [existingPlayers, setExistingPlayers] = useState<string[]>([]);
   const [started, setStarted] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<Difficulty | null>(null);
+  const [pendingSession, setPendingSession] = useState<SoloSession | null>(null);
 
   useEffect(() => {
     const players = getAllPlayers();
@@ -21,7 +31,19 @@ export default function SoloPage() {
     if (players.length === 1) {
       setPlayerName(players[0].name);
     }
+
+    setPendingSession(getSoloSession());
   }, []);
+
+  const handleResume = () => {
+    if (!pendingSession) return;
+    router.push(`/solo/${pendingSession.categorySlug}`);
+  };
+
+  const handleAbandon = () => {
+    clearSoloSession();
+    setPendingSession(null);
+  };
 
   const handleStart = () => {
     if (!playerName.trim()) return;
@@ -49,6 +71,14 @@ export default function SoloPage() {
         <div className="text-4xl mb-3">🎯</div>
         <h1 className="text-3xl font-bold text-slate-800 mb-2">Mode Solo</h1>
         <p className="text-slate-500 mb-8">Qui joue ?</p>
+
+        {pendingSession && (
+          <ResumeBanner
+            session={pendingSession}
+            onResume={handleResume}
+            onAbandon={handleAbandon}
+          />
+        )}
 
         {/* Joueurs existants */}
         {existingPlayers.length > 0 && (
@@ -124,6 +154,16 @@ export default function SoloPage() {
         </Link>
       </div>
 
+      {pendingSession && (
+        <div className="w-full max-w-4xl mb-6">
+          <ResumeBanner
+            session={pendingSession}
+            onResume={handleResume}
+            onAbandon={handleAbandon}
+          />
+        </div>
+      )}
+
       {/* Level selector */}
       <div className="w-full max-w-4xl mb-6">
         <p className="text-slate-500 mb-3">Choisis un niveau puis une catégorie</p>
@@ -156,5 +196,67 @@ export default function SoloPage() {
 
       <CategoryGrid progress={progress!} forcedLevel={selectedLevel} />
     </main>
+  );
+}
+
+function ResumeBanner({
+  session,
+  onResume,
+  onAbandon,
+}: {
+  session: SoloSession;
+  onResume: () => void;
+  onAbandon: () => void;
+}) {
+  const category = getCategoryBySlug(session.categorySlug);
+  const remaining = session.questions.length - session.currentIndex;
+  const difficultyLabel =
+    session.difficulty === "debutant"
+      ? "Débutant"
+      : session.difficulty === "confirme"
+      ? "Confirmé"
+      : "Expert";
+
+  return (
+    <div className="w-full max-w-sm sm:max-w-4xl mb-6 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-4 sm:p-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
+            style={{ backgroundColor: `${category?.color ?? "#6366f1"}20` }}
+          >
+            {category?.emoji ?? "🎯"}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wide">
+              Session en cours
+            </p>
+            <p className="text-sm font-semibold text-slate-800 truncate">
+              {session.playerName} · {category?.name ?? session.categorySlug}
+            </p>
+            <p className="text-xs text-slate-500">
+              {difficultyLabel} · {remaining} question{remaining > 1 ? "s" : ""} restante{remaining > 1 ? "s" : ""} · {session.correctCount} bonne{session.correctCount > 1 ? "s" : ""} / {session.currentIndex}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={onAbandon}
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            Abandonner
+          </button>
+          <button
+            onClick={onResume}
+            className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors cursor-pointer inline-flex items-center gap-1.5"
+          >
+            Reprendre
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
