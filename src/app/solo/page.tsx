@@ -9,7 +9,9 @@ import {
   getAllPlayers,
   getSoloSession,
   clearSoloSession,
+  getPlayerStats,
   type SoloSession,
+  type PlayerStats,
 } from "@/lib/storage";
 import { getCategoryBySlug } from "@/data/themes";
 import { PlayerProgress, Difficulty } from "@/lib/types";
@@ -22,6 +24,7 @@ export default function SoloPage() {
   const [started, setStarted] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<Difficulty | null>(null);
   const [pendingSession, setPendingSession] = useState<SoloSession | null>(null);
+  const [stats, setStats] = useState<PlayerStats | null>(null);
 
   useEffect(() => {
     const players = getAllPlayers();
@@ -47,8 +50,10 @@ export default function SoloPage() {
 
   const handleStart = () => {
     if (!playerName.trim()) return;
-    const p = getPlayerProgress(playerName.trim());
+    const name = playerName.trim();
+    const p = getPlayerProgress(name);
     setProgress(p);
+    setStats(getPlayerStats(name));
     setStarted(true);
   };
 
@@ -56,6 +61,7 @@ export default function SoloPage() {
     setPlayerName(name);
     const p = getPlayerProgress(name);
     setProgress(p);
+    setStats(getPlayerStats(name));
     setStarted(true);
   };
 
@@ -136,7 +142,7 @@ export default function SoloPage() {
   // Phase 2 : Grille des catégories
   return (
     <main className="flex-1 flex flex-col items-center px-3 sm:px-4 py-6 sm:py-8">
-      <div className="flex items-center justify-between w-full max-w-4xl mb-6 sm:mb-8">
+      <div className="flex items-center justify-between w-full max-w-4xl mb-4 sm:mb-6">
         <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800 truncate">
             Salut {progress!.name} 👋
@@ -153,6 +159,10 @@ export default function SoloPage() {
           Accueil
         </Link>
       </div>
+
+      {stats && stats.gamesPlayed > 0 && (
+        <StatsBanner stats={stats} />
+      )}
 
       {pendingSession && (
         <div className="w-full max-w-4xl mb-6">
@@ -196,6 +206,77 @@ export default function SoloPage() {
 
       <CategoryGrid progress={progress!} forcedLevel={selectedLevel} />
     </main>
+  );
+}
+
+function StatsBanner({ stats }: { stats: PlayerStats }) {
+  const bestCat = stats.bestCategorySlug
+    ? getCategoryBySlug(stats.bestCategorySlug)
+    : null;
+  const streakLabel =
+    stats.streak === 0
+      ? "Pas de série en cours"
+      : stats.streak === 1
+      ? "1 jour"
+      : `${stats.streak} jours`;
+  const streakIcon = stats.streak >= 3 ? "🔥" : stats.streak >= 1 ? "✨" : "💤";
+
+  return (
+    <div className="w-full max-w-4xl mb-4 sm:mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+      <StatPill
+        icon={streakIcon}
+        label="Série"
+        value={streakLabel}
+        highlight={stats.streak >= 3}
+      />
+      <StatPill
+        icon="📊"
+        label="Moyenne"
+        value={`${stats.averageRate}%`}
+      />
+      <StatPill
+        icon="🎯"
+        label="Questions"
+        value={`${stats.totalCorrect}/${stats.totalAnswered}`}
+      />
+      <StatPill
+        icon={bestCat?.emoji ?? "⭐"}
+        label="Meilleure cat."
+        value={
+          bestCat ? `${bestCat.name.split(" ")[0]} · ${stats.bestCategoryRate}%` : "—"
+        }
+      />
+    </div>
+  );
+}
+
+function StatPill({
+  icon,
+  label,
+  value,
+  highlight = false,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border-2 px-3 py-2 bg-white ${
+        highlight ? "border-orange-200 bg-gradient-to-br from-orange-50 to-white" : "border-slate-200"
+      }`}
+    >
+      <div className="flex items-center gap-1.5">
+        <span className="text-base leading-none">{icon}</span>
+        <p className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">
+          {label}
+        </p>
+      </div>
+      <p className="text-sm font-semibold text-slate-800 mt-0.5 truncate">
+        {value}
+      </p>
+    </div>
   );
 }
 

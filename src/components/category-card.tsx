@@ -13,6 +13,12 @@ type CategoryCardProps = {
   onClick: () => void;
 };
 
+const LEVEL_EMOJI: Record<Difficulty, string> = {
+  debutant: "🌱",
+  confirme: "📘",
+  expert: "🏆",
+};
+
 export default function CategoryCard({
   category,
   progress,
@@ -25,6 +31,17 @@ export default function CategoryCard({
     ? getSuccessRate(levelProgress.correct, levelProgress.answered)
     : 0;
   const isMastered = progress?.mastered ?? false;
+
+  // Agrégat global sur la catégorie (tous niveaux confondus)
+  const totalAnswered =
+    (progress?.debutant.answered ?? 0) +
+    (progress?.confirme.answered ?? 0) +
+    (progress?.expert.answered ?? 0);
+  const totalCorrect =
+    (progress?.debutant.correct ?? 0) +
+    (progress?.confirme.correct ?? 0) +
+    (progress?.expert.correct ?? 0);
+  const globalRate = getSuccessRate(totalCorrect, totalAnswered);
 
   return (
     <button
@@ -75,21 +92,46 @@ export default function CategoryCard({
       {/* Progress bar */}
       <ProgressBar value={rate} color={isLocked ? "#94a3b8" : category.color} showLabel />
 
-      {/* Locked levels indicator */}
-      <div className="flex gap-1 mt-2">
+      {/* Per-level mini stats */}
+      <div className="flex gap-1.5 mt-3">
         {(["debutant", "confirme", "expert"] as Difficulty[]).map((d) => {
           const unlocked = progress?.[d]?.unlocked ?? d === "debutant";
+          const lp = progress?.[d];
+          const r = lp ? getSuccessRate(lp.correct, lp.answered) : 0;
+          const answered = lp?.answered ?? 0;
           return (
-            <span
+            <div
               key={d}
-              className={`text-xs ${unlocked ? "opacity-100" : "opacity-30"}`}
-              title={unlocked ? `${d} débloqué` : `${d} verrouillé`}
+              className={`flex-1 rounded-lg border text-center py-1 ${
+                unlocked ? "border-slate-200 bg-white" : "border-slate-200 bg-slate-50 opacity-60"
+              }`}
+              title={
+                unlocked
+                  ? `${d} · ${answered} vues · ${r}% réussite`
+                  : `${d} verrouillé`
+              }
             >
-              {unlocked ? "🔓" : "🔒"}
-            </span>
+              <div className="text-[11px] leading-none">
+                {unlocked ? LEVEL_EMOJI[d] : "🔒"}
+              </div>
+              <div
+                className={`text-[10px] mt-0.5 font-medium ${
+                  unlocked ? "text-slate-500" : "text-slate-300"
+                }`}
+              >
+                {unlocked && answered > 0 ? `${r}%` : "—"}
+              </div>
+            </div>
           );
         })}
       </div>
+
+      {/* Footer : nb de questions vues */}
+      {totalAnswered > 0 && (
+        <p className="text-[11px] text-slate-400 mt-2">
+          {totalAnswered} question{totalAnswered > 1 ? "s" : ""} vue{totalAnswered > 1 ? "s" : ""} · {globalRate}% global
+        </p>
+      )}
     </button>
   );
 }
